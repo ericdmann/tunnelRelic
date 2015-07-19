@@ -45,6 +45,17 @@ Events can be resused/modified, and do not need to be allocated each time you wa
 
 ### Example
 
+Events sent to Insights are fully queryable/pullable through the Insights product.
+
+
+Queryable<br>
+<img src="http://d.pr/i/1gYOX+" style="width: 400px;"/><br>
+
+
+Explorable<br>
+<img src="http://d.pr/i/1lnO4+" style="width: 400px;"/><br>
+ 
+
 ```go
 
 	package main
@@ -88,3 +99,4 @@ Events can be resused/modified, and do not need to be allocated each time you wa
 ## TODO
 
 Verbose logging on/off
+Multiple events in single post
