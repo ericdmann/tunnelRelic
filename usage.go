@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"github.com/ericdmann/tunnelRelic"
-	"time"
+	"./src"
 )
 
 func main() {
