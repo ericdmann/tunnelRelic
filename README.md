@@ -18,7 +18,7 @@ Usage flow is drop-dead simple. Create tunnel -> send events to a tunnel -> we'l
 
 ### Create a tunnel
 
-```golang
+```go
 	gopherTunnel := tunnelRelic.NewTunnel(myAccount, myAPIKey, myTunnelName, flushInterval, bufferLimit)
 ```
 
@@ -32,41 +32,46 @@ Usage flow is drop-dead simple. Create tunnel -> send events to a tunnel -> we'l
 ### Create an event
 Events can be resused/modified, and do not need to be allocated each time you want to register an event. 
 
-```golang
+```go
 	anEvent := make(map[string]string)
 	anEvent["key"] = "value"
 	anEvent["Dammit"] = "Yoyo"
 ```
 
 ### Send an event
-```golang
+```go
 	gopherTunnel.RegisterEvent(anEvent)
 ```
 
-### Examples
-Check out usage.go. 
+### Example
 
-Here's sample output if you're doing it right!
+```go
 
-```
+	package main
 
-	tunnelRelic: Added event to send-queue. Currently  1  events in the queue
+	import (
+		"./src"
+	)
 
-	[{"Dammit":"Yoyo","eventType":"Purchase","key":"value"}]
+	func main() {
 
-	tunnelRelic: Added event to send-queue. Currently  2  events in the queue
+		//create tunnelRelic
+		myAccount := "123"
+		myAPIKey := "456"
+		myTunnelName := "Purchase"
+		flushInterval := 60
+		bufferLimit := 15
+		tunnel := tunnelRelic.NewTunnel(myAccount, myAPIKey, myTunnelName, flushInterval, bufferLimit)
 
-	[{"Dammit":"Yoyo","eventType":"Purchase","key":"value"}]
+		//Create sample event (can be reused)
+		anEvent := make(map[string]string)
+		anEvent["key"] = "value"
+		anEvent["Dammit"] = "Yoyo"
 
-	tunnelRelic: Added event to send-queue. Currently  3  events in the queue
+		//send event
+		tunnel.RegisterEvent(anEvent)
+	}
 
-	[{"Dammit":"Yoyo","eventType":"Purchase","key":"value"}]
-
-	tunnelRelic: Event queue buffer reached!
-
-	tunnelRelic: Gophers will now proceed to deliver queued events to New Relic.
-
-	tunnelRelic: Sending queued request to New Relic. Response:  {"success": true}
 
 ```
 
