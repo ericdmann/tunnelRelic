@@ -58,7 +58,7 @@ func (relic *Tunnel) RegisterEvent(event map[string]string) {
 	relic.SendQueue = append(relic.SendQueue, objectString)
 
 	fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
-	fmt.Println(objectString)
+	//fmt.Println(objectString)
 	if len(relic.SendQueue) > relic.SendBuffer {
 		fmt.Println("tunnelRelic: Event queue buffer reached!")
 		relic.EmptyQueue()
