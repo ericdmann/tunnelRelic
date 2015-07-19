@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./tunnel_relic"
 	"fmt"
+	"github.com/ericdmann/tunnelRelic"
 	"time"
 )
 
@@ -12,7 +12,9 @@ func main() {
 	myAccount := "123"
 	myAPIKey := "456"
 	myTunnelName := "Purchase"
-	tunnel := tunnelRelic.NewTunnel(myAccount, myAPIKey, myTunnelName, 3, 2)
+	flushInterval := 60
+	bufferLimit := 15
+	tunnel := tunnelRelic.NewTunnel(myAccount, myAPIKey, myTunnelName, flushInterval, bufferLimit)
 
 	//Create sample event (can be reused)
 	anEvent := make(map[string]string)
