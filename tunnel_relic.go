@@ -47,7 +47,7 @@ func (relic *Tunnel) MaintainQueue() {
 
 }
 
-func (relic *Tunnel) RegisterEvent(event map[string]string) {
+func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 	event["eventType"] = relic.InsightsEvent
 	eventJson, err := json.Marshal(event)
 	if err != nil {
