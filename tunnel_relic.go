@@ -54,7 +54,7 @@ func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 		fmt.Println("tunnelRelic: Error receiving event", err)
 	}
 
-	objectString := strings.Join([]string{"[", string(eventJson[:]), "]"}, "")
+	objectString := string(eventJson[:])
 	relic.SendQueue = append(relic.SendQueue, objectString)
 
 	fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
@@ -72,24 +72,23 @@ func (relic *Tunnel) EmptyQueue() {
 	}
 	fmt.Println("tunnelRelic: Gophers will now proceed to deliver queued events to New Relic.")
 
-	for request := range relic.SendQueue {
+	requestStr := "[" + strings.Join(relic.SendQueue, ",") + "]"
 
-		var eventJson = []byte(relic.SendQueue[request])
-		req, err := http.NewRequest("POST", relic.InsightsURL, bytes.NewBuffer(eventJson))
-		req.Header.Set("X-Insert-Key", relic.InsightsAPI)
-		req.Header.Set("Content-Type", "application/json")
+	fmt.Println(requestStr)
+	var eventJson = []byte(requestStr)
+	req, err := http.NewRequest("POST", relic.InsightsURL, bytes.NewBuffer(eventJson))
+	req.Header.Set("X-Insert-Key", relic.InsightsAPI)
+	req.Header.Set("Content-Type", "application/json")
 
-		client := &http.Client{}
-		resp, err := client.Do(req)
-		if err != nil {
-			panic(err)
-		}
-		defer resp.Body.Close()
-
-		body, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
-
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
 	}
+	defer resp.Body.Close()
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
 
 	relic.SendQueue = nil
 }
