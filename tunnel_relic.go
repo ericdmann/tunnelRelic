@@ -74,7 +74,6 @@ func (relic *Tunnel) EmptyQueue() {
 
 	requestStr := "[" + strings.Join(relic.SendQueue, ",") + "]"
 
-	fmt.Println(requestStr)
 	var eventJson = []byte(requestStr)
 	req, err := http.NewRequest("POST", relic.InsightsURL, bytes.NewBuffer(eventJson))
 	req.Header.Set("X-Insert-Key", relic.InsightsAPI)
