@@ -17,6 +17,7 @@ type Tunnel struct {
 	InsightsAccount string
 	InsightsEvent   string
 	InsightsURL     string
+	Silent          bool
 	SendQueue       []string
 }
 
@@ -30,6 +31,7 @@ func NewTunnel(Account string, APIKey string, EventName string, send int, sendBu
 		InsightsAPI:     APIKey,
 		InsightsAccount: Account,
 		InsightsURL:     url,
+		Silent:          false,
 		InsightsEvent:   EventName,
 	}
 
@@ -50,16 +52,17 @@ func (relic *Tunnel) MaintainQueue() {
 func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 	event["eventType"] = relic.InsightsEvent
 	eventJson, err := json.Marshal(event)
-	if err != nil {
+	if err != nil && relic.Silent != true {
 		fmt.Println("tunnelRelic: Error receiving event", err)
 	}
 
 	objectString := string(eventJson[:])
 	relic.SendQueue = append(relic.SendQueue, objectString)
-
-	fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
+	if relic.Silent != true {
+		fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
+	}
 	//fmt.Println(objectString)
-	if len(relic.SendQueue) > relic.SendBuffer {
+	if len(relic.SendQueue) > relic.SendBuffer && relic.Silent != true {
 		fmt.Println("tunnelRelic: Event queue buffer reached!")
 		relic.EmptyQueue()
 	}
@@ -70,7 +73,9 @@ func (relic *Tunnel) EmptyQueue() {
 	if len(relic.SendQueue) < 1 {
 		return
 	}
-	fmt.Println("tunnelRelic: Gophers will now proceed to deliver queued events to New Relic.")
+	if relic.Silent != true {
+		fmt.Println("tunnelRelic: Gophers will now proceed to deliver queued events to New Relic.")
+	}
 
 	requestStr := "[" + strings.Join(relic.SendQueue, ",") + "]"
 
@@ -87,7 +92,9 @@ func (relic *Tunnel) EmptyQueue() {
 	defer resp.Body.Close()
 
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
+	if relic.Silent != true {
+		fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
+	}
 
 	relic.SendQueue = nil
 }
