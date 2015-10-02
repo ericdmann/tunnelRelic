@@ -87,14 +87,14 @@ func (relic *Tunnel) EmptyQueue() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
 	}
 	defer resp.Body.Close()
+	relic.SendQueue = nil
 
 	body, _ := ioutil.ReadAll(resp.Body)
 	if relic.Silent != true {
 		fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
 	}
 
-	relic.SendQueue = nil
 }
