@@ -7,8 +7,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
+
+var tunnelLock sync.Mutex // Controls access to ruleset
 
 type Tunnel struct {
 	SendInterval    int
@@ -57,6 +60,8 @@ func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 	}
 
 	objectString := string(eventJson[:])
+	tunnelLock.Lock()
+	defer tunnelLock.Unlock()
 	relic.SendQueue = append(relic.SendQueue, objectString)
 	if relic.Silent != true {
 		fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
