@@ -81,18 +81,26 @@ func (relic *Tunnel) EmptyQueue() {
 
 	var eventJson = []byte(requestStr)
 	req, err := http.NewRequest("POST", relic.InsightsURL, bytes.NewBuffer(eventJson))
+	if err != nil {
+		relic.SendQueue = nil
+		return
+	}
 	req.Header.Set("X-Insert-Key", relic.InsightsAPI)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+	relic.SendQueue = nil
+
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	defer resp.Body.Close()
-	relic.SendQueue = nil
 
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
 	if relic.Silent != true {
 		fmt.Println("tunnelRelic: Sending queued request to New Relic. Response: ", string(body))
 	}
