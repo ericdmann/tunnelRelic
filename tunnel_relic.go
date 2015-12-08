@@ -69,7 +69,7 @@ func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 	//fmt.Println(objectString)
 	if len(relic.SendQueue) > relic.SendBuffer && relic.Silent != true {
 		fmt.Println("tunnelRelic: Event queue buffer reached!")
-		relic.EmptyQueue()
+		go relic.EmptyQueue()
 	}
 }
 
