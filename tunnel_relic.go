@@ -47,7 +47,7 @@ func (relic *Tunnel) MaintainQueue() {
 
 	for true {
 		time.Sleep(time.Second * time.Duration(int64(relic.SendInterval)))
-		relic.EmptyQueue()
+		go relic.EmptyQueue()
 	}
 
 }
@@ -99,6 +99,7 @@ func (relic *Tunnel) EmptyQueue() {
 
 	if err != nil {
 		fmt.Println(err.Error())
+		return
 	}
 	defer resp.Body.Close()
 
