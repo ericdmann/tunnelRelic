@@ -1,11 +1,11 @@
 # tunnelRelic
 
-tunnelRelic allows you to register/create/send custom events and custom attributes to New Relic Insights. Multiple tunnels (events) can be created to send events to different Insights events. 
+tunnelRelic allows you to register/create/send custom events and custom attributes to New Relic Insights. Multiple tunnels (events) can be created to send events to different Insights events.
 
 ## Requirements
 
-You'll need: 
-	New Relic Account # 
+You'll need:
+	New Relic Account #
 	Insights API key
 
 Both pieces of information are found here -> https://insights.newrelic.com/accounts/YOUR_ACCOUNT_NUM/manage/api_keys
@@ -14,7 +14,7 @@ Both pieces of information are found here -> https://insights.newrelic.com/accou
 ## Setup/Usage
 
 Usage flow is drop-dead simple. Create tunnel -> send events to a tunnel -> we'll send them along to New Relic
-	
+
 
 ### Create a tunnel
 
@@ -30,10 +30,10 @@ Usage flow is drop-dead simple. Create tunnel -> send events to a tunnel -> we'l
 	myTunnelName   	string 		//Name of the event you're registering
 
 ### Create an event
-Events can be resused/modified, and do not need to be allocated each time you want to register an event. 
+Events can be resused/modified, and do not need to be allocated each time you want to register an event.
 
 ```go
-	anEvent := make(map[string]string)
+	anEvent := gopherTunnel.NewTransaction()
 	anEvent["key"] = "value"
 	anEvent["Dammit"] = "Yoyo"
 ```
@@ -54,7 +54,7 @@ Queryable<br>
 
 Explorable<br>
 <img src="http://d.pr/i/1lnO4+" style="width: 400px;"/><br>
- 
+
 
 ```go
 
@@ -75,7 +75,7 @@ Explorable<br>
 		tunnel := tunnelRelic.NewTunnel(myAccount, myAPIKey, myTunnelName, flushInterval, bufferLimit)
 
 		//Create sample event (can be reused)
-		anEvent := make(map[string]string)
+		anEvent := tunnelRelic.NewTransaction()
 		anEvent["key"] = "value"
 		anEvent["Dammit"] = "Yoyo"
 
