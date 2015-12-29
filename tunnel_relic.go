@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -41,6 +42,18 @@ func NewTunnel(Account string, APIKey string, EventName string, send int, sendBu
 	go relic.MaintainQueue()
 	return relic
 
+}
+
+func NewTransaction() map[string]interface{} {
+	newRelicTransaction := make(map[string]interface{})
+
+	if hostname, err := os.Hostname(); err == nil {
+		newRelicTransaction["host"] = hostname
+	} else {
+		newRelicTransaction["host"] = "default"
+	}
+
+	return newRelicTransaction
 }
 
 func (relic *Tunnel) MaintainQueue() {
