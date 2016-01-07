@@ -44,7 +44,7 @@ func NewTunnel(Account string, APIKey string, EventName string, send int, sendBu
 
 }
 
-func NewTransaction() map[string]interface{} {
+func (relic *Tunnel) NewTransaction() map[string]interface{} {
 	newRelicTransaction := make(map[string]interface{})
 
 	if hostname, err := os.Hostname(); err == nil {
