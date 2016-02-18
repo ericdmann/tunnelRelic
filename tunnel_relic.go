@@ -23,6 +23,7 @@ type Tunnel struct {
 	InsightsURL     string
 	Silent          bool
 	SendQueue       []string
+	RunningByteSize int
 }
 
 func NewTunnel(Account string, APIKey string, EventName string, send int, sendBuff int) *Tunnel {
@@ -37,6 +38,7 @@ func NewTunnel(Account string, APIKey string, EventName string, send int, sendBu
 		InsightsURL:     url,
 		Silent:          false,
 		InsightsEvent:   EventName,
+		RunningByteSize: 0,
 	}
 
 	go relic.MaintainQueue()
@@ -75,13 +77,22 @@ func (relic *Tunnel) RegisterEvent(event map[string]interface{}) {
 	objectString := string(eventJson[:])
 	tunnelLock.Lock()
 	defer tunnelLock.Unlock()
+
 	relic.SendQueue = append(relic.SendQueue, objectString)
+	relic.RunningByteSize = relic.RunningByteSize + len(objectString)
+
 	if relic.Silent != true {
 		fmt.Println("tunnelRelic: Added event to send-queue. Currently ", len(relic.SendQueue), " events in the queue")
 	}
-	//fmt.Println(objectString)
-	if len(relic.SendQueue) > relic.SendBuffer && relic.Silent != true {
-		fmt.Println("tunnelRelic: Event queue buffer reached!")
+
+	// If we have gone over the specified item limit
+	// or we are about to go over the 5MB payload size.
+	// then send to Insights
+	if len(relic.SendQueue) > relic.SendBuffer || relic.RunningByteSize > 4000000 {
+		if relic.Silent != true {
+			fmt.Println("tunnelRelic: Event queue buffer reached!")
+		}
+
 		go relic.EmptyQueue()
 	}
 }
@@ -109,6 +120,7 @@ func (relic *Tunnel) EmptyQueue() {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	relic.SendQueue = nil
+	relic.RunningByteSize = 0
 
 	if err != nil {
 		fmt.Println(err.Error())
